@@ -1,0 +1,10 @@
+firstName,lastName,totalPrice,depositpaid,statusCode
+Hang,Huynh,8888,true,200
+Thu,Phuong,888,false,200
+Phi,Pham,, false,400
+Phi,Pham,lan, false,400
+Phi,Pham,888,,400
+Phi,Pham,888,345345,400
+Phi,Pham,888,sggdsag,400
+,Huynh,8888,true,400
+Hang,,8888,true,400

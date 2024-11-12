@@ -1,0 +1,903 @@
+{
+	"info": {
+		"_postman_id": "6d2727c4-9e67-4e72-8484-3902a23ec676",
+		"name": "Booking mangement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38818139",
+		"_collection_link": "https://www.postman.com/tracy03032003/workspace/ai-testing-workspace/collection/38818139-6d2727c4-9e67-4e72-8484-3902a23ec676?action=share&source=collection_link&creator=38818139"
+	},
+	"item": [
+		{
+			"name": "login",
+			"item": [
+				{
+					"name": "login correct",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\" : \".,\", \"password\" : \"password123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "create new booking and view flow",
+			"item": [
+				{
+					"name": "create a booking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"dataFirstName\", \"Dung\");",
+									"pm.collectionVariables.set(\"dataLastName\", \"Ha\");",
+									"pm.collectionVariables.set(\"setTotalPrice\", \"222\");",
+									"pm.collectionVariables.set(\"depositpaid\", true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"//Actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual = getResponse.booking.firstname",
+									"const lastName_actual = getResponse.booking.lastname",
+									"const totalPrice_actual = getResponse.booking.totalprice.toString()",
+									"const depositPaid_actual = getResponse.booking.depositpaid",
+									"",
+									"//expected result",
+									"",
+									"const firstName_expected = pm.variables.get(\"dataFirstName\")",
+									"const lastName_expected = pm.variables.get(\"dataLastName\")",
+									"const totalPrice_expected = pm.variables.get(\"setTotalPrice\")",
+									"const depositPaid_expected = pm.variables.get(\"depositpaid\")",
+									"//compare",
+									"",
+									"",
+									"",
+									"pm.test(\"Verify respone is correct\", function () {",
+									" pm.expect(firstName_actual).to.eql(firstName_expected)",
+									" pm.expect(lastName_actual).to.eql(lastName_expected)",
+									" pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									" pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"});",
+									"",
+									"",
+									"//set booking variable",
+									"const booking = getResponse.bookingid",
+									"pm.collectionVariables.set('bookingID',booking)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{dataFirstName}}\", \"lastname\" : \"{{dataLastName}}\", \"totalprice\" : {{setTotalPrice}}, \"depositpaid\" :{{depositpaid}}, \"bookingdates\" : { \"checkin\" : \"2018-03-01\", \"checkout\" : \"2018-02-01\" },\"additionalneeds\" : \"Breakfast\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bookingUrl}}/booking",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Verify respone has bookingID that is created before\", function () {",
+									"\tconst bookingID = pm.variables.get('bookingID')",
+									"    pm.expect(pm.response.text()).to.include(bookingID);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bookingUrl}}/booking",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a booking detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"//Actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual = getResponse.firstname",
+									"const lastName_actual = getResponse.lastname",
+									"const totalPrice_actual = getResponse.totalprice.toString()",
+									"const depositPaid_actual = getResponse.depositpaid",
+									"",
+									"//expected result",
+									"",
+									"const firstName_expected = pm.variables.get(\"dataFirstName\")",
+									"const lastName_expected = pm.variables.get(\"dataLastName\")",
+									"const totalPrice_expected = pm.variables.get(\"setTotalPrice\")",
+									"const depositPaid_expected = pm.variables.get(\"depositpaid\")",
+									"//compare",
+									"",
+									"",
+									"",
+									"pm.test(\"Verify respone is correct\", function () {",
+									" pm.expect(firstName_actual).to.eql(firstName_expected)",
+									" pm.expect(lastName_actual).to.eql(lastName_expected)",
+									" pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									" pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"});",
+									"",
+									"",
+									"//set booking variable",
+									"const booking = getResponse.bookingid",
+									"pm.collectionVariables.set('bookingID',booking)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"dataFirstName\", \"Dung\");",
+									"pm.collectionVariables.set(\"dataLastName\", \"Ha\");",
+									"pm.collectionVariables.set(\"setTotalPrice\", \"222\");",
+									"pm.collectionVariables.set(\"depositpaid\", true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{dataFirstName}}\", \"lastname\" : \"{{dataLastName}}\", \"totalprice\" : {{setTotalPrice}}, \"depositpaid\" :{{depositpaid}}, \"bookingdates\" : { \"checkin\" : \"2018-03-01\", \"checkout\" : \"2018-02-01\" },\"additionalneeds\" : \"Breakfast\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bookingUrl}}/booking/{{bookingID}}",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "update a booking and view flow",
+			"item": [
+				{
+					"name": "get a booking detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"\tpm.response.to.have.status(200);",
+									"});",
+									"//actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual= getResponse.firstname",
+									"const lastName_actual = getResponse.lastname",
+									"const totalPrice_actual = getResponse.totalprice.toString()",
+									"const depositPaid_actual = getResponse.depositpaid",
+									"//expected result",
+									"const firstName_expected = pm.variables.get('dataFirstName_update')",
+									"const lastName_expected = pm.variables.get('dataLastName_update')",
+									"const totalPrice_expected = pm.variables.get('setTotalPrice_update')",
+									"const depositPaid_expected =pm.variables.get('depositpaid_update')",
+									"//the first information",
+									"const firstName_init = pm.variables.get('dataFirstName')",
+									"//const lastName_init = pm.variables.get('dataLastName')",
+									"//const totalPrice_init=pm.variables.get('setTotalPrice')",
+									"//const depositPaid_init = pm.variables.get('depositpaid')",
+									"",
+									"//compare",
+									"pm.test('check respone is correct as new information'), function(){",
+									"pm.expect(firstName_actual).to.eql(firstName_expected)",
+									"pm.expect(lastName_actual).to.eql(lastName_expected)",
+									"pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									"pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookingUrl}}/booking/{{bookingID_updateflow}}",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingID_updateflow}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update booking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"dataFirstName_update\", \"Duy\");",
+									"pm.collectionVariables.set(\"dataLastName_update\", \"Duong\");",
+									"pm.collectionVariables.set(\"setTotalPrice_update\", \"333\");",
+									"pm.collectionVariables.set(\"depositpaid_update\", true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"\tpm.response.to.have.status(200);",
+									"});",
+									"//actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual= getResponse.firstname",
+									"const lastName_actual = getResponse.lastname",
+									"const totalPrice_actual = getResponse.totalprice.toString()",
+									"const depositPaid_actual = getResponse.depositpaid",
+									"//expected result",
+									"const firstName_expected = pm.variables.get('dataFirstName_update')",
+									"const lastName_expected = pm.variables.get('dataLastName_update')",
+									"const totalPrice_expected = pm.variables.get('setTotalPrice_update')",
+									"const depositPaid_expected =pm.variables.get('depositpaid_update')",
+									"//the first information",
+									"const firstName_init = pm.variables.get('dataFirstName')",
+									"//const lastName_init = pm.variables.get('dataLastName')",
+									"//const totalPrice_init=pm.variables.get('setTotalPrice')",
+									"//const depositPaid_init = pm.variables.get('depositpaid')",
+									"",
+									"//compare",
+									"pm.test('check respone is correct as new information'), function(){",
+									"pm.expect(firstName_actual).to.eql(firstName_expected)",
+									"pm.expect(lastName_actual).to.eql(lastName_expected)",
+									"pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									"pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"",
+									"}",
+									"",
+									"pm.test ('check respone is not the same with the first information'), function(){",
+									"pm.expect(firstName_actual).to.not.eql(firstName_init)",
+									"",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorisation",
+								"value": "Basic {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{dataFirstName_update}}\", \"lastname\" : \"{{dataLastName_update}}\", \"totalprice\" :{{setTotalPrice_update}}, \"depositpaid\" : {{depositpaid_update}}, \"bookingdates\" : {\n\"checkin\" : \"2024-01-01\", \"checkout\" : \"2024-02-01\" },\"additionalneeds\" : \"Breakfast\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bookingUrl}}/booking/{{bookingID_updateflow}}",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingID_updateflow}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login done",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"\tpm.response.to.have.status(200);",
+									"});",
+									"const respone = pm.response.json()",
+									"pm.collectionVariables.set('access_token',respone.token)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\" : \"admin\", \"password\" : \"password123\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bookingUrl}}/auth",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a booking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"dataFirstName\", \"Dung\");",
+									"pm.collectionVariables.set(\"dataLastName\", \"Ha\");",
+									"pm.collectionVariables.set(\"setTotalPrice\", \"222\");",
+									"pm.collectionVariables.set(\"depositpaid\", true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"//Actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual = getResponse.booking.firstname",
+									"const lastName_actual = getResponse.booking.lastname",
+									"const totalPrice_actual = getResponse.booking.totalprice.toString()",
+									"const depositPaid_actual = getResponse.booking.depositpaid",
+									"",
+									"//expected result",
+									"",
+									"const firstName_expected = pm.variables.get(\"dataFirstName\")",
+									"const lastName_expected = pm.variables.get(\"dataLastName\")",
+									"const totalPrice_expected = pm.variables.get(\"setTotalPrice\")",
+									"const depositPaid_expected = pm.variables.get(\"depositpaid\")",
+									"//compare",
+									"",
+									"",
+									"",
+									"pm.test(\"Verify respone is correct\", function () {",
+									" pm.expect(firstName_actual).to.eql(firstName_expected)",
+									" pm.expect(lastName_actual).to.eql(lastName_expected)",
+									" pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									" pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"});",
+									"",
+									"",
+									"//set booking variable",
+									"const booking = getResponse.bookingid",
+									"pm.collectionVariables.set('bookingID_updateflow',booking)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{dataFirstName}}\", \"lastname\" : \"{{dataLastName}}\", \"totalprice\" : {{setTotalPrice}}, \"depositpaid\" :{{depositpaid}}, \"bookingdates\" : { \"checkin\" : \"2018-03-01\", \"checkout\" : \"2018-02-01\" },\"additionalneeds\" : \"Breakfast\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation_Create booking",
+			"item": [
+				{
+					"name": "create new booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==200){",
+									"",
+									"",
+									"//get respone/actual",
+									"const respone = pm.response.json()",
+									"const firstName_actual = respone.booking.firstname",
+									"const lastName_actual = respone.booking.lastname",
+									"const totalPrice_actual = respone.booking.totalprice",
+									"const depositPaid_actual = respone.booking.depositpaid",
+									"",
+									"",
+									"//get input data",
+									"const firstName_expected = pm.iterationData.get('firstName')",
+									"const lastName_expected = pm.iterationData.get('lastName')",
+									"const totalPrice_expected = pm.iterationData.get('totalPrice')",
+									"const depositPaid_expected = pm.iterationData.get('depositpaid')",
+									"",
+									"",
+									"//compare",
+									"pm.test('check respone is correct'),function(){",
+									"\tpm.expect(firstName_actual).to.eql(firstName_expected)",
+									"pm.expect(lastName_actual).to.eql(lastName_expected)",
+									"pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									"pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"}",
+									"}",
+									"else{",
+									"pm.test(\"Status code is correct\",function(){",
+									"\tconst status = pm.iterationData.get('statusCode')",
+									"\tpm.response.to.have.status(status);",
+									"});",
+									"",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{firstname}}\", \"lastname\" : \"{{lastname}}\", \"totalprice\" : {{setTotalPrice}}, \"depositpaid\" :{{depositpaid}}, \"bookingdates\" : { \"checkin\" : \"2018-03-01\", \"checkout\" : \"2018-02-01\" },\"additionalneeds\" : \"Breakfast\" }\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "delete a booking",
+			"item": [
+				{
+					"name": "create a booking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"dataFirstName\", \"Dung\");",
+									"pm.collectionVariables.set(\"dataLastName\", \"Ha\");",
+									"pm.collectionVariables.set(\"setTotalPrice\", \"222\");",
+									"pm.collectionVariables.set(\"depositpaid\", true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code status\", function(){",
+									"    const statusCode = pm.iterationData.get('error')",
+									"    pm.response.to.have.status(statusCode);",
+									"});",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"//Actual result",
+									"const getResponse = pm.response.json()",
+									"const firstName_actual = getResponse.booking.firstname",
+									"const lastName_actual = getResponse.booking.lastname",
+									"const totalPrice_actual = getResponse.booking.totalprice.toString()",
+									"const depositPaid_actual = getResponse.booking.depositpaid",
+									"",
+									"//expected result",
+									"",
+									"const firstName_expected = pm.variables.get(\"dataFirstName\")",
+									"const lastName_expected = pm.variables.get(\"dataLastName\")",
+									"const totalPrice_expected = pm.variables.get(\"setTotalPrice\")",
+									"const depositPaid_expected = pm.variables.get(\"depositpaid\")",
+									"//compare",
+									"",
+									"",
+									"",
+									"pm.test(\"Verify respone is correct\", function () {",
+									" pm.expect(firstName_actual).to.eql(firstName_expected)",
+									" pm.expect(lastName_actual).to.eql(lastName_expected)",
+									" pm.expect(totalPrice_actual).to.eql(totalPrice_expected)",
+									" pm.expect(depositPaid_actual).to.eql(depositPaid_expected)",
+									"});",
+									"",
+									"",
+									"//set booking variable",
+									"const booking = getResponse.bookingid",
+									"pm.collectionVariables.set('bookingID_deleteflow',booking)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"firstname\" : \"{{dataFirstName}}\", \"lastname\" : \"{{dataLastName}}\", \"totalprice\" : {{setTotalPrice}}, \"depositpaid\" :{{depositpaid}}, \"bookingdates\" : { \"checkin\" : \"2018-03-01\", \"checkout\" : \"2018-02-01\" },\"additionalneeds\" : \"Breakfast\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a booking detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 not found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookingUrl}}/booking/{{bookingID_deleteflow}}",
+							"host": [
+								"{{bookingUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingID_deleteflow}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a booking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorisation",
+								"value": "Basic {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingID_deleteflow}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingID_deleteflow}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "dataFirstName",
+			"value": ""
+		},
+		{
+			"key": "dataLastName",
+			"value": ""
+		},
+		{
+			"key": "setTotalPrice",
+			"value": ""
+		},
+		{
+			"key": "depositpaid",
+			"value": ""
+		},
+		{
+			"key": "bookingID",
+			"value": ""
+		},
+		{
+			"key": "dataFirstName_update",
+			"value": ""
+		},
+		{
+			"key": "dataLastName_update",
+			"value": ""
+		},
+		{
+			"key": "setTotalPrice_update",
+			"value": ""
+		},
+		{
+			"key": "depositpaid_update",
+			"value": ""
+		},
+		{
+			"key": "bookingID_updateflow",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "bookingID_deleteflow",
+			"value": ""
+		},
+		{
+			"key": "firstname",
+			"value": ""
+		},
+		{
+			"key": "lastname",
+			"value": ""
+		},
+		{
+			"key": "settotalprice",
+			"value": ""
+		},
+		{
+			"key": "depositPaid",
+			"value": ""
+		},
+		{
+			"key": "FirstName",
+			"value": ""
+		},
+		{
+			"key": "LastName",
+			"value": ""
+		}
+	]
+}
